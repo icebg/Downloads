@@ -1,0 +1,73 @@
+--- NEW function and struct:
+sockaddr_in
+  servaddr.sin_family = AF_INET;
+  servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+  servaddr.sin_port = htons(SERV_PORT);
+
+socklen_t
+socket()
+bzero()
+bind()
+listen()
+accept()
+inet_ntop()
+ntohs()
+
+
+--- PROCEDURE
+socket: protocol => fd
+bind: addr, port => fd
+listen: as passive socket, max connection queue length => fd
+accept: fd => client address, connfd
+
+htonl
+htons
+inet_ntop
+ntohs
+
+&servaddr => bind
+  sin_addr
+  sin_port
+&cliaddr <= accept
+  sin_family
+  sin.addr.s_addr
+  sin_port
+
+
+------ client.c
+connect
+
+netstat
+
+
+------ wrap.c ERROR HANDLINIG
+accept
+  ECONNABORTED EINTR
+    again:
+bind
+connect
+listen
+socket
+read
+  EINTR
+    again:
+write
+  EINTR
+    again:
+close
+
+
+-------- PUZZLE
+refer to tcp operations:
+  bind listen accept
+Q: when "server" start "listen", "client" can ESTABLISH connections already? Conflict with <<c linux>>. Then what "accept" do on earth?
+
+
+
+---- static
+  function
+  variable out function
+  variable in function
+
+  external and static (Chapter 19, 20)
+

@@ -1,0 +1,149 @@
+段(segment) : 传输层 : TCP/UDP
+数据报(datagram) : 网络层 : IP
+帧(frame) : 链路层
+
+集线器(Hub): 物理层
+交换机: 链路层
+路由器: 网络层(兼有交换机功能)（IP 协议是构成 Internet 的基础）
+
+以太网协议
+令牌网协议
+
+point-to-point
+end-to-end
+
+以太网驱动程序
+IP ARP RARP
+ICMP IGMP TCP UDP
+
+
+--------------- 36-2-以太网(RFC 894)帧格式
+MAC 地址 48bit
+ifconfig
+IP ARP RARP
+CRC
+
+46 ~ 1500
+PAD
+MTU
+分片 fragmentation
+  ifconfig
+
+
+---------------- 36 - 6 - UDP segment format
+Ethernet frame head:    {14} (Byte)
+  body: {46, 1500}
+arp head: {14}
+  arp request: {28}
+ip head:                {20,} 
+udp head:               {8}
+
+
+Ethernet {14}
+FF FF FF FF FF FF FF FF FF FF FF FF FF FF
+<---------------> <---------------> <--->
+dest addr         src addr          type
+
+
+ARP head {14}, requet/response {28}
+FF FF FF FF FF FF FF FF FF FF FF FF FF FF 
+<---------------> <---------------> <---> 
+|                 |                 frame type
+|                 MAC addr src 
+MAC addr dest
+FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF 
+<---> <---> <> <> <---> <---------------> <---------> <---------------> <---------> 
+|     |     |  |  |     |                 |           |                 IP dest
+|     |     |  |  |     |                 |           Ethernet addr dest
+|     |     |  |  |     |                 IP src
+|     |     |  |  |     Ethernet addr src
+|     |     |  |  op
+|     |     |  协议地址长度
+|     |     硬件地址长度
+|     protocol type
+hardware type
+
+
+IP {20,}  ;4 Byte * N
+FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF ...
+^^ <> <---> <---> ^---> <> <> <---> <---------> <---------> options... and data
+^^ ^  ^     ^     ^     ^  ^  ^     ^           ^            
+|| |  |     |     !     |  |  |     |           |            
+|| |  |     |     !     |  |  |     |           dest ip addr
+|| |  |     |     !     |  |  |     src ip addr
+|| |  |     |     !     |  |  首部校验和
+|| |  |     |     !     |  Protocol
+|| |  |     |     !     TTL
+|| |  |     |     标志 3bit
+|| |  |     |     片位移 13 bit after '标志'
+|| |  |     标识
+|| |  Length(all)
+|| TOS
+|Length(head) (unit: 4 Bytes)
+Edition
+
+
+UDP {8}
+FF FF FF FF FF FF FF FF 
+<---> <---> <---> <--->
+|     |     |     UDP 校验和
+|     |     UDP Length
+|     dest port
+src port
+
+
+
+----------- noun
+检验和: (Checksum)
+  sha md5
+  man md5sum
+
+
+可靠性
+  送达
+  顺序
+  缓冲区
+
+UDP TFTP(trivial FTP)
+TCP FTP
+TOS: priority. (depredated)
+TTL: Time to live. unit: "hop"("跳"). 
+
+
+
+------------------------------ tcp
+segment format
+
+TCP head {20,60}
+FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF [options] [data] ... 
+<---> <---> <---------> <---------> ^< X> <---> <---> <--->
+|     |     |           |           || |  |     |     紧急指针
+|     |     |           |           || |  |     Checksum
+|     |     |           |           || |  窗口大小
+|     |     |           |           || URG, ACK, PSH, RST, SYN, FIN 控制位
+|     |     |           |           |reserved 6 bit
+|     |     |           |           首部长度
+|     |     |           确认序号
+|     |     序号
+|     port dest
+port src
+
+
+SYN mms three-way-handshake
+ACK
+FIN
+
+RST ;Connection Refused.
+
+序号 +1 per Byte of [date] (include FIN&SYN without data)
+
+piggyback
+
+一问一答
+全双工 full-duplex
+半双工 half-duplex
+一套序号 vs 各自维护一套序号
+
+关闭连接需要 4 个段 vs 建立连接 3 次握手
+  服务器的 *应答* 和 *关闭连接请求* 通常不合并在一个段中
+  case: 连接半关闭
