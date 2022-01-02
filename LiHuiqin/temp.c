@@ -1,13 +1,18 @@
 #include<stdio.h>
 #include<stdlib.h>
-int main()
+int main(int argc,char *argv[])
 {
-	FILE *fp;
-	if( (fp = fopen("hello.txt","r+")) == NULL)
+	FILE *fp=NULL;
+	if( (fp = fopen(argv[1],"r+")) == NULL)
 	{
-		perror("fopen hello.txt");
+		perror("fopen ");
 	}
 	fseek(fp,0,SEEK_SET);
-	printf("%ld\n", ftell(fp));
-		exit(0);
+
+	char * str = malloc(sizeof(str));
+	while(fgets(str,128,fp) != NULL )
+	{
+		printf("after a fgets, file position now is %ld\n",ftell(fp));
+	}
+	exit(0);
 }
